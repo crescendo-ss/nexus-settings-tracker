@@ -1,0 +1,40 @@
+name: Track Subspace settings
+
+on:
+  schedule:
+    # Best-effort every 15 minutes. GitHub may delay or throttle scheduled
+    # runs under load, and disables them after 60 days of repo inactivity.
+    - cron: "*/15 * * * *"
+  workflow_dispatch: {}
+
+# Allow the job to push commits back to the repository.
+permissions:
+  contents: write
+
+# Never let two syncs run at once (avoids push races).
+concurrency:
+  group: track-settings
+  cancel-in-progress: false
+
+jobs:
+  track:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Configure git identity
+        run: |
+          git config user.name  "subspace-tracker[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Fetch & split arena settings
+        run: python track.py --commit
+
+      - name: Push changes
+        run: git push

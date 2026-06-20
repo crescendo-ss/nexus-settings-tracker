@@ -1,0 +1,42 @@
+{
+  "base_url": "https://subspacenexus.com/api/config",
+  "output_dir": "arenas",
+
+  "arenas": [
+    { "id": 87, "name": null }
+  ],
+
+  "exclude_sections": ["Staff"],
+  "exclude_keys": {
+    "*": []
+  },
+
+  "file_groups": {
+    "ship-settings.conf": [
+      "Warbird", "Javelin", "Spider", "Leviathan",
+      "Terrier", "Weasel", "Lancaster", "Shark"
+    ],
+    "weapons.conf": [
+      "Bullet", "Bomb", "Mine", "Shrapnel",
+      "Burst", "Rocket", "Repel", "Brick"
+    ],
+    "prizes.conf": [
+      "Prize", "PrizeWeight", "DPrizeWeight", "Periodic"
+    ],
+    "modules.conf": [
+      "Modules",
+      "SS.Matchmaking.TeamVersusMatch",
+      "SS.Matchmaking.MatchFocus",
+      "ClashEngine"
+    ],
+    "network.conf": [
+      "Lag", "Latency", "Net", "Security", "Message"
+    ],
+    "arena.conf": [
+      "General", "Misc", "Door", "Radar", "Spawn", "Spectator",
+      "Team", "Toggle", "Wormhole", "Kill"
+    ]
+  },
+
+  "default_file": "other.conf"
+}
