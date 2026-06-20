@@ -3,3 +3,6 @@ __pycache__/
 .DS_Store
 .venv/
 venv/
+
+# Generated changelog site (built fresh in CI, deployed to Pages, never committed).
+_site/

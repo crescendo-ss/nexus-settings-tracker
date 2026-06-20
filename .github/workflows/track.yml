@@ -7,9 +7,13 @@ on:
     - cron: "*/15 * * * *"
   workflow_dispatch: {}
 
-# Allow the job to push commits back to the repository.
+# Allow the job to push commits back to the repository, and to publish the
+# generated changelog site to GitHub Pages (pages + id-token are required by
+# actions/deploy-pages).
 permissions:
   contents: write
+  pages: write
+  id-token: write
 
 # Never let two syncs run at once (avoids push races).
 concurrency:
@@ -19,9 +23,15 @@ concurrency:
 jobs:
   track:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          # Full history so build_site.py can render the whole changelog.
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -38,3 +48,21 @@ jobs:
 
       - name: Push changes
         run: git push
+
+      # Build the changelog site from git history and publish it to Pages.
+      # The site is a Pages artifact only -- it is never committed, so the
+      # 15-minute job stays noise-free (track.py's "no volatile content" rule).
+      - name: Build changelog site
+        run: python build_site.py --output _site
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

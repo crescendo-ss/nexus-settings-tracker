@@ -59,11 +59,31 @@ python track.py --arena 87    # restrict to one arena
 
 No third-party dependencies — Python 3.8+ standard library only.
 
+## Changelog website
+
+The git history already records every change with a descriptive message, but
+`build_site.py` turns that history into a browsable static site:
+
+```bash
+python build_site.py            # render the site into ./_site
+python build_site.py --output DIR --repo owner/name
+```
+
+It produces `index.html` (a timeline across all arenas) plus one page per
+arena, parsing the structured commit messages `track.py` writes (`~` changed,
+`+` added, `−` removed). The site is **generated, never committed** — it's
+inherently time-based, so writing it into the repo would defeat the
+noise-free design above. CI builds it fresh and deploys it to GitHub Pages as
+an artifact; `_site/` is git-ignored. Still standard-library only.
+
 ## Automation
 
 `.github/workflows/track.yml` runs `python track.py --commit` every ~15 minutes
-and pushes. It uses the built-in `GITHUB_TOKEN` (no secrets to configure) and
-needs `contents: write` permission, which is already set in the workflow.
+and pushes, then builds the changelog site and deploys it to GitHub Pages. It
+uses the built-in `GITHUB_TOKEN` (no secrets to configure) and needs
+`contents: write` plus `pages: write` / `id-token: write` permissions, all
+already set in the workflow. Enable Pages once under **Settings → Pages →
+Build and deployment → Source: GitHub Actions**.
 
 > Scheduled GitHub workflows are best-effort: runs can be delayed under load and
 > are automatically disabled after 60 days with no repository activity. Pushes
